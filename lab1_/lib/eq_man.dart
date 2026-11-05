@@ -96,3 +96,32 @@ List<String> validateEquipment(Equipment item) {
 bool Function(Equipment) makeTypeFilter(String targetType) {
   return (Equipment eq) => eq.type.toLowerCase() == targetType.toLowerCase();
 }
+
+String buildReport(
+  List<Equipment> items, {
+  int topCount = 5,
+  bool maskInv = false,
+  String separator = ' | ',
+}) {
+  final buffer = StringBuffer();
+  buffer.writeln('ЗВІТ ПРО ОБЛАДНАННЯ');
+  final displayItems = items.take(topCount);
+  for (final eq in displayItems) {
+    String displayInv = eq.invNumber;
+    if (maskInv) {
+      displayInv = displayInv.replaceAllMapped(invRegex, (match) {
+        return '${(match as RegExpMatch).namedGroup('prefix')!}-****';
+      });
+    }
+    final ageInDays = DateTime.now().difference(eq.purchaseDate).inDays;
+    buffer.writeln(
+      'ІНВ: $displayInv$separator'
+      'Тип: ${eq.type}$separator'
+      'Ауд: ${eq.room}$separator'
+      'Вік: $ageInDays днів$separator'
+      'Стан: ${eq.condition}',
+    );
+  }
+
+  return buffer.toString();
+}

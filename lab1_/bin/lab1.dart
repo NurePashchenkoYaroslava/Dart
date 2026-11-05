@@ -8,6 +8,7 @@ void main() {
   void logProcessed() {
     processedLines++;
   }
+
   for (final line in rawData) {
     logProcessed();
     final parsed = parseLine(line);
@@ -27,7 +28,8 @@ void main() {
   print(
     'Оброблено рядків: $processedLines. Успішно додано: ${validEquipments.length}\n',
   );
-   print('Етап 2: конвеєри обробки');
+
+  print('Етап 2: конвеєри обробки');
   final isPc = makeTypeFilter('PC');
   final totalPcAgeDays = validEquipments
       .where(isPc)
@@ -67,4 +69,20 @@ void main() {
     print('Тип "${entry.key}": ${entry.value.length} одиниць');
   }
   print('');
+
+  print('Етап 4: сортування та звіт');
+  void sortEquipments(List<Equipment> list, {bool ascending = true}) {
+    list.sort((a, b) {
+      int cmp = a.purchaseDate.compareTo(b.purchaseDate);
+      if (cmp == 0) {
+        cmp = a.room.compareTo(b.room);
+      }
+      return ascending ? cmp : -cmp;
+    });
+  }
+
+  final sortedList = List<Equipment>.from(validEquipments);
+  sortEquipments(sortedList, ascending: false);
+  final report = buildReport(sortedList, topCount: 5, maskInv: true);
+  print(report);
 }
