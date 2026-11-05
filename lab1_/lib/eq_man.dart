@@ -93,4 +93,6 @@ List<String> validateEquipment(Equipment item) {
   return violations;
 }
 
-
+bool Function(Equipment) makeTypeFilter(String targetType) {
+  return (Equipment eq) => eq.type.toLowerCase() == targetType.toLowerCase();
+}
